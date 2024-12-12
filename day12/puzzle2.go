@@ -28,9 +28,7 @@ func Puzzle2() {
 	regions := findRegionsInMap(areaMap)
 	price := 0
 	for _, region := range regions {
-		sides := findSidesCount(region)
-		fmt.Println(region.id, len(region.coordinates), sides)
-		price += len(region.coordinates) * sides
+		price += len(region.coordinates) * region.amountOfSides()
 	}
 
 	fmt.Println(price)

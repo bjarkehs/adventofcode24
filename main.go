@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	day12.Puzzle2()
+	day12.Run()
 }

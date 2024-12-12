@@ -28,9 +28,7 @@ func Puzzle1() {
 	regions := findRegionsInMap(areaMap)
 	price := 0
 	for _, region := range regions {
-		perimeter := findPerimeterSize(region)
-		fmt.Println(region.id, len(region.coordinates), perimeter)
-		price += len(region.coordinates) * perimeter
+		price += len(region.coordinates) * region.perimeterSize()
 	}
 
 	fmt.Println(price)
