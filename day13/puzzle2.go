@@ -50,32 +50,13 @@ func Puzzle2() {
 			xCoordinate, _ := strconv.Atoi(prizeMatch[1])
 			yCoordinate, _ := strconv.Atoi(prizeMatch[2])
 			currentGame.prizePosition = types.Coordinate{X: xCoordinate + 10000000000000, Y: yCoordinate + 10000000000000}
-			tokens += findTokensEquations(currentGame)
+			tokens += currentGame.solve()
 			currentGame = Game{}
 			continue
 		}
 	}
 
 	fmt.Println(tokens)
-}
-
-func findTokensEquations(game Game) int {
-	a1 := float64(game.moveA.coordinate.X)
-	a2 := float64(game.moveA.coordinate.Y)
-	b1 := float64(game.moveB.coordinate.X)
-	b2 := float64(game.moveB.coordinate.Y)
-	p1 := float64(game.prizePosition.X)
-	p2 := float64(game.prizePosition.Y)
-
-	determinant := a1*b2 - a2*b1
-	x := (p1*b2 - p2*b1) / determinant
-	y := (a1*p2 - a2*p1) / determinant
-
-	if x >= 0 && y >= 0 && isInteger(x) && isInteger(y) {
-		return game.moveA.cost*int(x) + game.moveB.cost*int(y)
-	}
-
-	return 0
 }
 
 func isInteger(f float64) bool {
