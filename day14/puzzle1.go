@@ -60,17 +60,7 @@ func quadrant(position types.Coordinate, middleX, middleY int) (int, bool) {
 }
 
 func calculateSafetyFactor(robots []Robot, moves int, maxX, maxY int) int {
-	newCoordinates := moveRobots(robots, moves, maxX, maxY)
-	middleX := maxX / 2
-	middleY := maxY / 2
-	quadrants := make(map[int]int)
-	for _, coordinate := range newCoordinates {
-		quadrant, shouldCount := quadrant(coordinate, middleX, middleY)
-		if !shouldCount {
-			continue
-		}
-		quadrants[quadrant]++
-	}
+	quadrants := moveRobots(robots, moves, maxX, maxY)
 
 	product := 1
 	for _, value := range quadrants {

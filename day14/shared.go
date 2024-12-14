@@ -17,14 +17,20 @@ func positionAfterMoves(position types.Coordinate, velocity types.Coordinate, mo
 	return types.Coordinate{X: newX, Y: newY}
 }
 
-func moveRobots(robots []Robot, moves int, maxX, maxY int) []types.Coordinate {
-	coordinates := make([]types.Coordinate, 0)
+func moveRobots(robots []Robot, moves int, maxX, maxY int) map[int]int {
+	robotsInQuadrants := make(map[int]int)
+	middleX := maxX / 2
+	middleY := maxY / 2
 	for _, robot := range robots {
 		newPosition := positionAfterMoves(robot.Position, robot.Velocity, moves, maxX, maxY)
-		coordinates = append(coordinates, newPosition)
+		robotQuadrant, ok := quadrant(newPosition, middleX, middleY)
+		if !ok {
+			continue
+		}
+		robotsInQuadrants[robotQuadrant] += 1
 	}
 
-	return coordinates
+	return robotsInQuadrants
 }
 
 func moveRobotsInMap(robots []Robot, moves int, maxX, maxY int) map[int]map[int]int {

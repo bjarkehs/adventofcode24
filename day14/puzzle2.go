@@ -81,11 +81,7 @@ func findChristmasTree(robots []Robot, maxX, maxY int) {
 	for seconds < 10000 {
 		seconds++
 		robotsMap := moveRobotsInMap(robots, seconds, maxX, maxY)
-		fmt.Println()
-		fmt.Println("======================================================================================================================")
-		fmt.Println("Seconds:", seconds)
-		fmt.Println("======================================================================================================================")
-		fmt.Println("======================================================================================================================")
 		saveMapImage(robotsMap, maxX, maxY, seconds)
 	}
+	fmt.Print("Saved map images")
 }
