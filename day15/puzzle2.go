@@ -113,52 +113,23 @@ func canMoveToCoordinate(area [][]string, potentialNewCoordinate types.Coordinat
 			continue
 		}
 
-		if area[coordinate.Y][coordinate.X] == "[" {
-			if move%2 == 0 {
-				// Moving vertically
-				visited[coordinate] = true
-				endCoordinate := types.Coordinate{X: coordinate.X + 1, Y: coordinate.Y}
-				visited[endCoordinate] = true
-				nextCoordinate := coordinate.CoordinateForDirection(move)
-				nextEndCoordinate := endCoordinate.CoordinateForDirection(move)
-				renders[nextCoordinate] = "["
-				renders[nextEndCoordinate] = "]"
-				queue.PushBack(nextCoordinate)
-				queue.PushBack(nextEndCoordinate)
-				emptyCoordinate(renders, coordinate)
-				emptyCoordinate(renders, endCoordinate)
-			} else {
-				// Moving horizontally
-				visited[coordinate] = true
-				nextCoordinate := coordinate.CoordinateForDirection(move)
-				renders[nextCoordinate] = "["
-				queue.PushBack(nextCoordinate)
-				emptyCoordinate(renders, coordinate)
-			}
+		objectPart := area[coordinate.Y][coordinate.X]
+		visitCoordinate := func(coordinate types.Coordinate, objectPart string) {
+			visited[coordinate] = true
+			nextCoordinate := coordinate.CoordinateForDirection(move)
+			renders[nextCoordinate] = objectPart
+			queue.PushBack(nextCoordinate)
+			emptyCoordinate(renders, coordinate)
 		}
-
-		if area[coordinate.Y][coordinate.X] == "]" {
-			if move%2 == 0 {
-				// Moving vertically
-				visited[coordinate] = true
-				startCoordinate := types.Coordinate{X: coordinate.X - 1, Y: coordinate.Y}
-				visited[startCoordinate] = true
-				nextCoordinate := coordinate.CoordinateForDirection(move)
-				nextStartCoordinate := startCoordinate.CoordinateForDirection(move)
-				renders[nextCoordinate] = "]"
-				renders[nextStartCoordinate] = "["
-				queue.PushBack(nextCoordinate)
-				queue.PushBack(nextStartCoordinate)
-				emptyCoordinate(renders, coordinate)
-				emptyCoordinate(renders, startCoordinate)
-			} else {
-				// Moving horizontally
-				visited[coordinate] = true
-				nextCoordinate := coordinate.CoordinateForDirection(move)
-				renders[nextCoordinate] = "]"
-				queue.PushBack(nextCoordinate)
-				emptyCoordinate(renders, coordinate)
-			}
+		if move%2 == 0 {
+			// Moving vertically
+			visitCoordinate(coordinate, objectPart)
+			offset := objectPartCoordinateOffset(objectPart)
+			otherCoordinate := types.Coordinate{X: coordinate.X + offset, Y: coordinate.Y}
+			visitCoordinate(otherCoordinate, otherObjectPart(objectPart))
+		} else {
+			// Moving horizontally
+			visitCoordinate(coordinate, objectPart)
 		}
 	}
 
@@ -194,4 +165,20 @@ func robotStartPosition(area [][]string) types.Coordinate {
 	}
 
 	return types.Coordinate{X: 0, Y: 0}
+}
+
+func objectPartCoordinateOffset(objectPart string) int {
+	if objectPart == "[" {
+		return 1
+	}
+
+	return -1
+}
+
+func otherObjectPart(objectPart string) string {
+	if objectPart == "[" {
+		return "]"
+	}
+
+	return "["
 }
