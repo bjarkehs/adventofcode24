@@ -17,3 +17,22 @@ func (c Coordinate) adjacentCoordinates() [4]Coordinate {
 		{c.X - 1, c.Y},
 	}
 }
+
+func (c Coordinate) CoordinateForDirection(direction int) Coordinate {
+	return c.CoordinateForDirectionWithOffset(direction, 1)
+}
+
+func (c Coordinate) CoordinateForDirectionWithOffset(direction int, offset int) Coordinate {
+	switch direction {
+	case 0:
+		return Coordinate{c.X, c.Y - offset}
+	case 1:
+		return Coordinate{c.X + offset, c.Y}
+	case 2:
+		return Coordinate{c.X, c.Y + offset}
+	case 3:
+		return Coordinate{c.X - offset, c.Y}
+	default:
+		panic("Invalid direction")
+	}
+}
