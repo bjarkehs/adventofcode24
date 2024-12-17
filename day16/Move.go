@@ -60,7 +60,6 @@ func (move Move) AdjacentMoves() [4]Move {
 	return [4]Move{
 		{coordinate: move.coordinate.CoordinateForDirection(move.direction), direction: move.direction},
 		{coordinate: move.coordinate, direction: (move.direction + 1) % 4},
-		{coordinate: move.coordinate, direction: (move.direction + 2) % 4},
 		{coordinate: move.coordinate, direction: (move.direction + 3) % 4},
 	}
 }

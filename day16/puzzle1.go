@@ -116,12 +116,23 @@ func dijkstra(maze [][]string, startPosition, endPosition types.Coordinate, init
 	startMove := Move{coordinate: startPosition, direction: initialDirection}
 	cost[startMove] = 0
 
+	bestScore := math.MaxInt
+
 	queue := list.New()
 	queue.PushBack(startMove)
 	for queue.Len() > 0 {
 		current := queue.Front()
 		queue.Remove(current)
 		currentMove := current.Value.(Move)
+
+		if cost[currentMove] > bestScore {
+			continue
+		}
+
+		if currentMove.coordinate == endPosition {
+			bestScore = min(bestScore, cost[currentMove])
+			continue
+		}
 
 		neighbors := currentMove.coordinate.AdjacentCoordinates()
 		for _, neighbor := range neighbors {
@@ -175,12 +186,23 @@ func dijkstra2(maze [][]string, startPosition, endPosition types.Coordinate, ini
 	startMove := Move{coordinate: startPosition, direction: initialDirection}
 	cost[startMove] = 0
 
+	bestScore := math.MaxInt
+
 	queue := list.New()
 	queue.PushBack(startMove)
 	for queue.Len() > 0 {
 		current := queue.Front()
 		queue.Remove(current)
 		currentMove := current.Value.(Move)
+
+		if cost[currentMove] > bestScore {
+			continue
+		}
+
+		if currentMove.coordinate == endPosition {
+			bestScore = min(bestScore, cost[currentMove])
+			continue
+		}
 
 		neighborMoves := currentMove.AdjacentMoves()
 		for _, neighborMove := range neighborMoves {
@@ -197,22 +219,11 @@ func dijkstra2(maze [][]string, startPosition, endPosition types.Coordinate, ini
 		}
 	}
 
-	// TODO: Simplify this
-	possibleEndMoves := []Move{
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 0},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 1},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 2},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 3},
-	}
-
 	bestEndMove := Move{}
-	bestEndMoveCost := math.MaxInt
-	for _, possibleEndMove := range possibleEndMoves {
-		if moveCost, ok := cost[possibleEndMove]; ok {
-			if moveCost < bestEndMoveCost {
-				bestEndMoveCost = moveCost
-				bestEndMove = possibleEndMove
-			}
+	for i := 0; i < 4; i++ {
+		possibleEndMove := Move{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: i}
+		if moveCost, ok := cost[possibleEndMove]; ok && moveCost == bestScore {
+			bestEndMove = possibleEndMove
 		}
 	}
 

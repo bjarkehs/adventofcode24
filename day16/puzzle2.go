@@ -55,12 +55,23 @@ func dijkstra3(maze [][]string, startPosition, endPosition types.Coordinate, ini
 	startMove := Move{coordinate: startPosition, direction: initialDirection}
 	cost[startMove] = 0
 
+	bestScore := math.MaxInt
+
 	queue := list.New()
 	queue.PushBack(startMove)
 	for queue.Len() > 0 {
 		current := queue.Front()
 		queue.Remove(current)
 		currentMove := current.Value.(Move)
+
+		if cost[currentMove] > bestScore {
+			continue
+		}
+
+		if currentMove.coordinate == endPosition {
+			bestScore = min(bestScore, cost[currentMove])
+			continue
+		}
 
 		neighborMoves := currentMove.AdjacentMoves()
 		for _, neighborMove := range neighborMoves {
@@ -79,36 +90,29 @@ func dijkstra3(maze [][]string, startPosition, endPosition types.Coordinate, ini
 		}
 	}
 
-	// TODO: Simplify this
-	possibleEndMoves := []Move{
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 0},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 1},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 2},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 3},
-	}
-
-	bestEndMove := Move{}
-	bestEndMoveCost := math.MaxInt
-	for _, possibleEndMove := range possibleEndMoves {
-		if moveCost, ok := cost[possibleEndMove]; ok {
-			if moveCost < bestEndMoveCost {
-				bestEndMoveCost = moveCost
-				bestEndMove = possibleEndMove
-			}
+	bestEndMoves := make([]Move, 0)
+	for i := 0; i < 4; i++ {
+		possibleEndMove := Move{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: i}
+		if moveCost, ok := cost[possibleEndMove]; ok && moveCost == bestScore {
+			bestEndMoves = append(bestEndMoves, possibleEndMove)
 		}
 	}
 
-	allPossiblePositions := possiblePositions(cameFrom, bestEndMove)
+	allPossiblePositions := possiblePositions(cameFrom, bestEndMoves)
 
-	return cost[bestEndMove], allPossiblePositions
+	return bestScore, allPossiblePositions
 }
 
-func possiblePositions(cameFrom map[Move][]Move, current Move) []types.Coordinate {
+func possiblePositions(cameFrom map[Move][]Move, endMoves []Move) []types.Coordinate {
 	possiblePositionsMap := make(map[types.Coordinate]bool)
 	visited := make(map[Move]bool)
 
 	queue := list.New()
-	queue.PushBack(current)
+	for _, current := range endMoves {
+		queue.PushBack(current)
+		visited[current] = true
+	}
+
 	for queue.Len() > 0 {
 		next := queue.Front()
 		queue.Remove(next)
