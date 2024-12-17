@@ -46,11 +46,8 @@ func Puzzle1() {
 		}
 	}
 
-	cost, _ := dijkstra2(maze, startPosition, endPosition, 1)
-	//printMaze(maze, path)
-	//fmt.Println(path)
+	cost, _ := aStar(maze, startPosition, endPosition, 1)
 	fmt.Println(cost)
-	//fmt.Println(recalculateCostOfPath(path))
 }
 
 func aStar(maze [][]string, startPosition, endPosition types.Coordinate, initialDirection int) (int, []Move) {

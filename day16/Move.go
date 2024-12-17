@@ -32,15 +32,19 @@ func (move Move) DirectionChangesTo(otherCoordinate types.Coordinate) int {
 	if xDiff != 0 {
 		if move.direction == 0 || move.direction == 2 {
 			directionChanges++
-		} else if (move.direction > 0) != (xDiff > 0) {
-			directionChanges++
+		} else if move.direction == 1 && xDiff < 0 {
+			directionChanges += 2
+		} else if move.direction == 3 && xDiff > 0 {
+			directionChanges += 2
 		}
 	}
 	if yDiff != 0 {
 		if move.direction == 1 || move.direction == 3 {
 			directionChanges++
-		} else if (move.direction > 1) != (yDiff > 0) {
-			directionChanges++
+		} else if move.direction == 0 && yDiff > 0 {
+			directionChanges += 2
+		} else if move.direction == 2 && yDiff < 0 {
+			directionChanges += 2
 		}
 	}
 
