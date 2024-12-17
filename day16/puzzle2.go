@@ -50,7 +50,7 @@ func Puzzle2() {
 
 func dijkstra3(maze [][]string, startPosition, endPosition types.Coordinate, initialDirection int) (int, []types.Coordinate) {
 	cost := make(map[Move]int)
-	cameFrom := make(map[Move]map[Move]bool)
+	cameFrom := make(map[Move][]Move)
 
 	startMove := Move{coordinate: startPosition, direction: initialDirection}
 	cost[startMove] = 0
@@ -69,13 +69,12 @@ func dijkstra3(maze [][]string, startPosition, endPosition types.Coordinate, ini
 			}
 			costOfVisitingNeighbor := cost[currentMove] + scoreOfMove2(currentMove, neighborMove)
 			neighborCost, hasVisitedNeighbor := cost[neighborMove]
-			if !hasVisitedNeighbor || costOfVisitingNeighbor <= neighborCost {
+			if !hasVisitedNeighbor || costOfVisitingNeighbor < neighborCost {
 				cost[neighborMove] = costOfVisitingNeighbor
-				if !hasVisitedNeighbor || costOfVisitingNeighbor < neighborCost {
-					cameFrom[neighborMove] = make(map[Move]bool)
-				}
-				cameFrom[neighborMove][currentMove] = true
+				cameFrom[neighborMove] = []Move{currentMove}
 				queue.PushBack(neighborMove)
+			} else if costOfVisitingNeighbor == neighborCost {
+				cameFrom[neighborMove] = append(cameFrom[neighborMove], currentMove)
 			}
 		}
 	}
@@ -104,7 +103,7 @@ func dijkstra3(maze [][]string, startPosition, endPosition types.Coordinate, ini
 	return cost[bestEndMove], allPossiblePositions
 }
 
-func possiblePositions(cameFrom map[Move]map[Move]bool, current Move) []types.Coordinate {
+func possiblePositions(cameFrom map[Move][]Move, current Move) []types.Coordinate {
 	possiblePositionsMap := make(map[types.Coordinate]bool)
 	visited := make(map[Move]bool)
 
@@ -119,7 +118,7 @@ func possiblePositions(cameFrom map[Move]map[Move]bool, current Move) []types.Co
 		if !ok {
 			continue
 		}
-		for move := range previousMoves {
+		for _, move := range previousMoves {
 			if _, ok := visited[move]; !ok {
 				queue.PushBack(move)
 				visited[move] = true
