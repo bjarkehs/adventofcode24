@@ -26,29 +26,21 @@ func (move Move) DirectionTowards(otherCoordinate types.Coordinate) int {
 }
 
 func (move Move) DirectionChangesTo(otherCoordinate types.Coordinate) int {
-	directionChanges := 0
 	xDiff := otherCoordinate.X - move.coordinate.X
 	yDiff := otherCoordinate.Y - move.coordinate.Y
-	if xDiff != 0 {
-		if move.direction == 0 || move.direction == 2 {
-			directionChanges++
-		} else if move.direction == 1 && xDiff < 0 {
-			directionChanges += 2
-		} else if move.direction == 3 && xDiff > 0 {
-			directionChanges += 2
-		}
-	}
-	if yDiff != 0 {
-		if move.direction == 1 || move.direction == 3 {
-			directionChanges++
-		} else if move.direction == 0 && yDiff > 0 {
-			directionChanges += 2
-		} else if move.direction == 2 && yDiff < 0 {
-			directionChanges += 2
-		}
+
+	if (xDiff != 0 && move.direction%2 == 0) || (yDiff != 0 && move.direction%2 == 1) {
+		return 1
 	}
 
-	return directionChanges
+	if (xDiff > 0 && move.direction == 3) ||
+		(xDiff < 0 && move.direction == 1) ||
+		(yDiff > 0 && move.direction == 0) ||
+		(yDiff < 0 && move.direction == 2) {
+		return 2
+	}
+
+	return 0
 }
 
 func (move Move) DirectionChangesToMove(otherMove Move) int {
