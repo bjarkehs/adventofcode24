@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"adventofcode2024-go/types"
 	"math"
 	"strconv"
 )
@@ -42,4 +43,12 @@ func RemoveIndex(s []int, index int) []int {
 	ret := make([]int, 0)
 	ret = append(ret, s[:index]...)
 	return append(ret, s[index+1:]...)
+}
+
+func ManhattanDistance(x1, y1, x2, y2 int) int {
+	return AbsInt(x1-x2) + AbsInt(y1-y2)
+}
+
+func ManhattanDistanceCoordinate(c1, c2 types.Coordinate) int {
+	return ManhattanDistance(c1.X, c1.Y, c2.X, c2.Y)
 }

@@ -134,17 +134,13 @@ func dijkstra(maze [][]string, startPosition, endPosition types.Coordinate, init
 			continue
 		}
 
-		neighbors := currentMove.coordinate.AdjacentCoordinates()
-		for _, neighbor := range neighbors {
-			if maze[neighbor.Y][neighbor.X] == "#" {
+		neighbors := currentMove.AdjacentMoves2()
+		for _, neighborMove := range neighbors {
+			if maze[neighborMove.coordinate.Y][neighborMove.coordinate.X] == "#" {
 				continue
 			}
-			neighborDirection := currentMove.DirectionTowards(neighbor)
-			if neighborDirection == -1 {
-				continue
-			}
-			neighborMove := Move{coordinate: neighbor, direction: currentMove.DirectionTowards(neighbor)}
-			costOfVisitingNeighbor := cost[currentMove] + scoreOfMove(currentMove, neighbor)
+
+			costOfVisitingNeighbor := cost[currentMove] + scoreOfMove(currentMove, neighborMove.coordinate)
 			neighborCost, hasVisitedNeighbor := cost[neighborMove]
 			if !hasVisitedNeighbor || costOfVisitingNeighbor < neighborCost {
 				cost[neighborMove] = costOfVisitingNeighbor
@@ -154,22 +150,11 @@ func dijkstra(maze [][]string, startPosition, endPosition types.Coordinate, init
 		}
 	}
 
-	// TODO: Simplify this
-	possibleEndMoves := []Move{
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 0},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 1},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 2},
-		{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: 3},
-	}
-
 	bestEndMove := Move{}
-	bestEndMoveCost := math.MaxInt
-	for _, possibleEndMove := range possibleEndMoves {
-		if moveCost, ok := cost[possibleEndMove]; ok {
-			if moveCost < bestEndMoveCost {
-				bestEndMoveCost = moveCost
-				bestEndMove = possibleEndMove
-			}
+	for i := 0; i < 4; i++ {
+		possibleEndMove := Move{coordinate: types.Coordinate{X: endPosition.X, Y: endPosition.Y}, direction: i}
+		if moveCost, ok := cost[possibleEndMove]; ok && moveCost == bestScore {
+			bestEndMove = possibleEndMove
 		}
 	}
 
@@ -234,20 +219,13 @@ func dijkstra2(maze [][]string, startPosition, endPosition types.Coordinate, ini
 }
 
 func scoreOfMove(currentMove Move, nextPosition types.Coordinate) int {
-	currentPosition := currentMove.coordinate
-	absX := helpers.AbsInt(currentPosition.X - nextPosition.X)
-	absY := helpers.AbsInt(currentPosition.Y - nextPosition.Y)
 	directionChanges := currentMove.DirectionChangesTo(nextPosition)
-	return absX + absY + directionChanges*1000
+	return helpers.ManhattanDistanceCoordinate(currentMove.coordinate, nextPosition) + directionChanges*1000
 }
 
 func scoreOfMove2(currentMove Move, nextMove Move) int {
-	currentPosition := currentMove.coordinate
-	nextPosition := nextMove.coordinate
-	absX := helpers.AbsInt(currentPosition.X - nextPosition.X)
-	absY := helpers.AbsInt(currentPosition.Y - nextPosition.Y)
 	directionChanges := currentMove.DirectionChangesToMove(nextMove)
-	return absX + absY + directionChanges*1000
+	return helpers.ManhattanDistanceCoordinate(currentMove.coordinate, nextMove.coordinate) + directionChanges*1000
 }
 
 func recalculateCostOfPath(path []Move) int {

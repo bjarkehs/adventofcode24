@@ -56,10 +56,19 @@ func (move Move) DirectionChangesToMove(otherMove Move) int {
 	return directionDifference
 }
 
-func (move Move) AdjacentMoves() [4]Move {
-	return [4]Move{
+func (move Move) AdjacentMoves() [3]Move {
+	return [3]Move{
 		{coordinate: move.coordinate.CoordinateForDirection(move.direction), direction: move.direction},
 		{coordinate: move.coordinate, direction: (move.direction + 1) % 4},
 		{coordinate: move.coordinate, direction: (move.direction + 3) % 4},
 	}
+}
+
+func (move Move) AdjacentMoves2() [3]Move {
+	directions := [3]int{(move.direction + 1) % 4, (move.direction + 3) % 4, move.direction}
+	adjacentMoves := [3]Move{}
+	for i, direction := range directions {
+		adjacentMoves[i] = Move{coordinate: move.coordinate.CoordinateForDirection(direction), direction: direction}
+	}
+	return adjacentMoves
 }
